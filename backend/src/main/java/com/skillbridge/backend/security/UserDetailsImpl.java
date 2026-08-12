@@ -21,15 +21,18 @@ public class UserDetailsImpl implements UserDetails {
 
     private String fullName;
 
+    private boolean enabled;
+
     private Collection<? extends GrantedAuthority> authorities;
 
     public UserDetailsImpl(Long id, String username, String email, String password, String fullName,
-                           Collection<? extends GrantedAuthority> authorities) {
+                           boolean enabled, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
         this.fullName = fullName;
+        this.enabled = enabled;
         this.authorities = authorities;
     }
 
@@ -42,6 +45,7 @@ public class UserDetailsImpl implements UserDetails {
                 user.getEmail(),
                 user.getPassword(),
                 user.getFullName(),
+                user.isActive(),
                 Collections.singletonList(authority)
         );
     }
@@ -90,7 +94,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 
     @Override

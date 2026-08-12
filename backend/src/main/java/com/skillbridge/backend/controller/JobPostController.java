@@ -32,8 +32,8 @@ public class JobPostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<JobPost>> getAllJobs() {
-        return ResponseEntity.ok(jobPostService.getAllJobPosts());
+    public ResponseEntity<List<JobPost>> getAllJobs(@RequestParam(required = false) String type) {
+        return ResponseEntity.ok(jobPostService.getAllJobPosts(type));
     }
 
     @GetMapping("/my")
@@ -41,5 +41,43 @@ public class JobPostController {
     public ResponseEntity<List<JobPost>> getMyJobs(Principal principal) {
         String username = principal.getName();
         return ResponseEntity.ok(jobPostService.getMyJobPosts(username));
+    }
+
+    @PostMapping("/{jobId}/apply")
+    @PreAuthorize("hasAuthority('ROLE_STUDENT')")
+    public ResponseEntity<?> applyToJob(
+            @PathVariable Long jobId,
+            @Valid @RequestBody com.skillbridge.backend.dto.JobApplicationRequest request,
+            Principal principal) {
+        try {
+            String username = principal.getName();
+            jobPostService.applyToJob(jobId, username, request.getLinkedinUrl(), request.getCoverLetter());
+            return ResponseEntity.ok(new MessageResponse("Your application has been submitted successfully!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/{jobId}/applications")
+    @PreAuthorize("hasAuthority('ROLE_JOB_POSTER')")
+    public ResponseEntity<?> getApplicationsForJob(@PathVariable Long jobId, Principal principal) {
+        try {
+            String username = principal.getName();
+            return ResponseEntity.ok(jobPostService.getApplicationsForJob(jobId, username));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
+    }
+
+    @PutMapping("/applications/{applicationId}/select")
+    @PreAuthorize("hasAuthority('ROLE_JOB_POSTER')")
+    public ResponseEntity<?> selectApplicant(@PathVariable Long applicationId, Principal principal) {
+        try {
+            String username = principal.getName();
+            jobPostService.selectApplicant(applicationId, username);
+            return ResponseEntity.ok(new MessageResponse("Applicant selected successfully and student has been notified."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
     }
 }

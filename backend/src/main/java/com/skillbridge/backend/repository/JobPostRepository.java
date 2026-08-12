@@ -9,4 +9,6 @@ import java.util.List;
 public interface JobPostRepository extends JpaRepository<JobPost, Long> {
     List<JobPost> findAllByOrderByCreatedAtDesc();
     List<JobPost> findByPostedByIdOrderByCreatedAtDesc(Long postedById);
+    List<JobPost> findByStatusOrderByCreatedAtDesc(String status);
+    List<JobPost> findByTypeAndStatusOrderByCreatedAtDesc(String type, String status);
 }

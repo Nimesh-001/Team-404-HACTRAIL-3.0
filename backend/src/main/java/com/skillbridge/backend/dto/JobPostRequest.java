@@ -15,6 +15,12 @@ public class JobPostRequest {
     @NotBlank(message = "Price Range is required")
     private String priceRange;
 
+    private String type = "JOB";
+
+    private Integer vacancies = 1;
+
+    private Integer maxApplications = 100;
+
     public JobPostRequest() {
     }
 
@@ -48,5 +54,29 @@ public class JobPostRequest {
 
     public void setPriceRange(String priceRange) {
         this.priceRange = priceRange;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Integer getVacancies() {
+        return vacancies;
+    }
+
+    public void setVacancies(Integer vacancies) {
+        this.vacancies = vacancies;
+    }
+
+    public Integer getMaxApplications() {
+        return maxApplications;
+    }
+
+    public void setMaxApplications(Integer maxApplications) {
+        this.maxApplications = maxApplications;
     }
 }

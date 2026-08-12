@@ -19,6 +19,8 @@ public class AuthController {
         try {
             AuthResponse response = authService.authenticateUser(loginRequest);
             return ResponseEntity.ok(response);
+        } catch (org.springframework.security.authentication.DisabledException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Your account has been suspended by the administrator."));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Invalid username/email or password!"));
         }
