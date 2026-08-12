@@ -27,6 +27,19 @@ public class JobPost {
     @Column(name = "price_range", nullable = false)
     private String priceRange;
 
+    private String status = "PENDING";
+
+    @Column(nullable = false)
+    private String type = "JOB";
+
+    private Integer vacancies = 1;
+
+    @Column(name = "max_applications")
+    private Integer maxApplications = 100;
+
+    @Column(name = "application_count")
+    private Integer applicationCount = 0;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "posted_by_id", nullable = false)
     private User postedBy;
@@ -104,5 +117,45 @@ public class JobPost {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Integer getVacancies() {
+        return vacancies;
+    }
+
+    public void setVacancies(Integer vacancies) {
+        this.vacancies = vacancies;
+    }
+
+    public Integer getMaxApplications() {
+        return maxApplications;
+    }
+
+    public void setMaxApplications(Integer maxApplications) {
+        this.maxApplications = maxApplications;
+    }
+
+    public Integer getApplicationCount() {
+        return applicationCount;
+    }
+
+    public void setApplicationCount(Integer applicationCount) {
+        this.applicationCount = applicationCount;
     }
 }

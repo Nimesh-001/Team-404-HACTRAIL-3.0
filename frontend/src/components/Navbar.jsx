@@ -25,15 +25,7 @@ const Navbar = () => {
               <span className="nav-welcome">
                 Hey, <strong>{user.fullName}</strong>
               </span>
-              <Link
-                to={user.role === 'ROLE_STUDENT' ? '/student-dashboard' : '/job-poster-dashboard'}
-                className="nav-item dashboard-link"
-              >
-                Dashboard
-              </Link>
-              <Link to="/profile" className="nav-item">
-                Profile
-              </Link>
+
               <button onClick={handleLogout} className="btn btn-outline nav-logout-btn">
                 Logout
               </button>

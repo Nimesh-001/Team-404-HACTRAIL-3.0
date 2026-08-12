@@ -33,6 +33,8 @@ public class StudentProfile {
     @Column(name = "linkedin_link")
     private String linkedinLink;
 
+    private boolean verified = false;
+
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "user_id")
@@ -133,5 +135,13 @@ public class StudentProfile {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
     }
 }

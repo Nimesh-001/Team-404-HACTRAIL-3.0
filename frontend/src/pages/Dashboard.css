@@ -291,17 +291,15 @@
   border-radius: 6px;
 }
 
-.status-active {
-  color: var(--success);
-  background: var(--success-bg);
+
 }
 
 .status-pending {
-  color: #F59E0B;
-  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+  background: rgba(217, 119, 6, 0.1);
 }
 
-.status-closed {
+.status-rejected {
   color: var(--error);
   background: var(--error-bg);
 }
@@ -379,4 +377,4 @@
   .job-budget-badge {
     margin-top: 0.5rem;
   }
-}
+

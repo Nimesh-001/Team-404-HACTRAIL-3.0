@@ -25,6 +25,8 @@ const Login = () => {
         navigate('/student-dashboard');
       } else if (user.role === 'ROLE_JOB_POSTER') {
         navigate('/job-poster-dashboard');
+      } else if (user.role === 'ROLE_ADMIN') {
+        navigate('/admin-dashboard');
       }
     }
   }, [user, navigate]);
@@ -68,6 +70,8 @@ const Login = () => {
         navigate('/student-dashboard');
       } else if (loggedInUser.role === 'ROLE_JOB_POSTER') {
         navigate('/job-poster-dashboard');
+      } else if (loggedInUser.role === 'ROLE_ADMIN') {
+        navigate('/admin-dashboard');
       }
     } catch (err) {
       setServerError(err);

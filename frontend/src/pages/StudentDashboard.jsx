@@ -6,26 +6,135 @@ import { AuthContext } from '../context/AuthContext';
 import './Dashboard.css';
 
 const StudentDashboard = () => {
-  const { user, logout } = useContext(AuthContext);
+
   const [jobs, setJobs] = useState([]);
+  const [mentors, setMentors] = useState([]);
+  const [messages, setMessages] = useState([]);
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Modal and application states
+  const [showModal, setShowModal] = useState(false);
+  const [activeJob, setActiveJob] = useState(null);
+  const [profileData, setProfileData] = useState(null);
+  const [linkedinUrl, setLinkedinUrl] = useState('');
+  const [coverLetter, setCoverLetter] = useState('');
+  const [modalError, setModalError] = useState('');
+  const [modalLoading, setModalLoading] = useState(false);
+
+  // Bell dropdown trigger state
+  const [showBellDropdown, setShowBellDropdown] = useState(false);
+
   useEffect(() => {
-    fetchJobs();
+    fetchInitialData();
+  }, [activeTab]);
+
+  useEffect(() => {
+    fetchInbox();
   }, []);
 
-  const fetchJobs = async () => {
+  const fetchInitialData = async () => {
     setLoading(true);
     setError('');
+    setSuccess('');
     try {
-      const response = await API.get('/api/jobs');
-      setJobs(response.data);
+      if (activeTab === 'earn') {
+        const res = await API.get('/api/jobs?type=JOB');
+        setJobs(res.data);
+      } else if (activeTab === 'internship') {
+        const res = await API.get('/api/jobs?type=INTERNSHIP');
+        setJobs(res.data);
+      } else if (activeTab === 'scholarship') {
+        const res = await API.get('/api/jobs?type=SCHOLARSHIP');
+        setJobs(res.data);
+      } else if (activeTab === 'mentor') {
+        const res = await API.get('/api/mentor-programs');
+        setMentors(res.data);
+      }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to load jobs. Please try again.');
+      setError(err.response?.data?.message || 'Failed to retrieve opportunities.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchInbox = async () => {
+    try {
+      const res = await API.get('/api/messages/my');
+      setMessages(res.data || []);
+    } catch (err) {
+      console.error("Inbox load fail", err);
+    }
+  };
+
+  const handleMarkAsRead = async (messageId) => {
+    try {
+      await API.put(`/api/messages/${messageId}/read`);
+      setMessages(prev => prev.map(m => m.id === messageId ? { ...m, read: true } : m));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleApplyMentorship = async (programId) => {
+    setError('');
+    setSuccess('');
+    try {
+      const res = await API.post(`/api/mentor-programs/${programId}/apply`);
+      setSuccess(res.data.message || 'Mentorship application submitted successfully!');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to submit application.');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleOpenApplyModal = async (job) => {
+    setError('');
+    setSuccess('');
+    setModalError('');
+    setLinkedinUrl('');
+    setCoverLetter('');
+    setActiveJob(job);
+    
+    try {
+      const res = await API.get('/api/profile');
+      const profile = res.data;
+      setProfileData(profile);
+      if (profile.linkedinLink) {
+        setLinkedinUrl(profile.linkedinLink);
+      }
+      setShowModal(true);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to retrieve profile details.');
+    }
+  };
+
+  const handleSendApplication = async (e) => {
+    e.preventDefault();
+    setModalError('');
+    if (!linkedinUrl.trim()) {
+      setModalError('LinkedIn profile link is required.');
+      return;
+    }
+    
+    setModalLoading(true);
+    try {
+      const res = await API.post(`/api/jobs/${activeJob.id}/apply`, {
+        linkedinUrl,
+        coverLetter
+      });
+      setSuccess(res.data.message || 'Your application has been submitted successfully!');
+      setShowModal(false);
+      fetchInitialData(); // reload values
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      setModalError(err.response?.data?.message || 'Failed to submit application.');
+    } finally {
+      setModalLoading(false);
     }
   };
 
@@ -37,60 +146,20 @@ const StudentDashboard = () => {
     return titleMatch || descMatch || reqMatch || posterMatch;
   });
 
+  const filteredMentors = mentors.filter((m) => {
+    const titleMatch = m.title?.toLowerCase().includes(searchTerm.toLowerCase());
+    const descMatch = m.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    const mentorMatch = m.mentorName?.toLowerCase().includes(searchTerm.toLowerCase());
+    const schoolMatch = m.school?.toLowerCase().includes(searchTerm.toLowerCase());
+    return titleMatch || descMatch || mentorMatch || schoolMatch;
+  });
+
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const greeting = new Date().getHours() < 12 ? 'Good Morning' : (new Date().getHours() < 17 ? 'Good Afternoon' : 'Good Evening');
 
-  return (
-    <div className="dashboard-layout-wrapper">
-      {/* Sidebar Navigation */}
-      <div className="sidebar-card">
-        <div className="sidebar-profile">
-          <div className="sidebar-avatar">
-            <span>{user?.fullName?.charAt(0).toUpperCase() || 'U'}</span>
-          </div>
-          <div className="sidebar-info">
-            <span className="sidebar-name">{user?.fullName || 'Student'}</span>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>💻 Student</span>
-          </div>
-        </div>
-
-        <div className="sidebar-menu-group">
-          <span className="sidebar-menu-label">General</span>
-          <Link to="/student-dashboard" className="sidebar-menu-item active">
-            <FiGrid className="sidebar-icon" /> Dashboard
-          </Link>
-          <Link to="/profile" className="sidebar-menu-item">
-            <FiUser className="sidebar-icon" /> My Profile
-          </Link>
-          <button onClick={logout} className="sidebar-menu-item" style={{ marginTop: 'auto' }}>
-            <FiLogOut className="sidebar-icon" /> Logout
-          </button>
-        </div>
-      </div>
-
-      {/* Main Content Area */}
-      <div className="main-content-area">
-        <div className="dashboard-container" style={{ padding: 0 }}>
-          <div style={{ textAlign: 'left', marginBottom: '2rem' }}>
-            <h1 className="gradient-text" style={{ fontSize: '2.5rem', fontWeight: 800 }}>
-              {greeting}, {user?.fullName || 'Kasun'} 👋
-            </h1>
-            <p style={{ color: 'var(--text-muted)', fontSize: '1rem', marginTop: '0.25rem' }}>
-              Here is your student dashboard overview for today.
-            </p>
-          </div>
-
-          {/* Visual Stats Row */}
-          <div className="dashboard-stats-row">
-            <div className="stat-card stat-blue">
-              <span className="stat-icon"><FiCode className="stat-icon-svg" /></span>
-              <div className="stat-details">
-                <span className="stat-label">Skills Showcase</span>
-                <span className="stat-value">5 Verified</span>
               </div>
             </div>
             <div className="stat-card stat-indigo">
@@ -99,12 +168,7 @@ const StudentDashboard = () => {
                 <span className="stat-label">Applied Gigs</span>
                 <span className="stat-value">8 Projects</span>
               </div>
-            </div>
-            <div className="stat-card stat-green">
-              <span className="stat-icon"><FiDollarSign className="stat-icon-svg" /></span>
-              <div className="stat-details">
-                <span className="stat-label">Total Earnings</span>
-                <span className="stat-value">Rs. 12,500</span>
+
               </div>
             </div>
           </div>
@@ -169,7 +233,7 @@ const StudentDashboard = () => {
             </div>
           )}
         </div>
-      </div>
+dev
     </div>
   );
 };

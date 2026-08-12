@@ -11,6 +11,7 @@ import Login from './pages/Login';
 import StudentDashboard from './pages/StudentDashboard';
 import JobPosterDashboard from './pages/JobPosterDashboard';
 import ProfileSettings from './pages/ProfileSettings';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   return (
@@ -49,6 +50,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <ProfileSettings />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin-dashboard" 
+                element={
+                  <ProtectedRoute allowedRoles={['ROLE_ADMIN']}>
+                    <AdminDashboard />
                   </ProtectedRoute>
                 } 
               />

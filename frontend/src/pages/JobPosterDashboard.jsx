@@ -8,9 +8,15 @@ import './Dashboard.css';
 const JobPosterDashboard = () => {
   const { user, logout } = useContext(AuthContext);
   const [myJobs, setMyJobs] = useState([]);
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
+
+  // Applicants view states
+  const [expandedJobId, setExpandedJobId] = useState(null);
+  const [applicantsMap, setApplicantsMap] = useState({});
+  const [applicantsLoading, setApplicantsLoading] = useState(false);
 
   // New job form state
   const [formData, setFormData] = useState({
@@ -18,6 +24,9 @@ const JobPosterDashboard = () => {
     description: '',
     requirements: '',
     priceRange: '',
+    type: 'JOB', // JOB, INTERNSHIP, SCHOLARSHIP
+    vacancies: 1,
+    maxApplications: 100,
   });
   const [formErrors, setFormErrors] = useState({});
   const [formLoading, setFormLoading] = useState(false);
@@ -25,6 +34,7 @@ const JobPosterDashboard = () => {
 
   useEffect(() => {
     fetchMyJobs();
+    fetchInbox();
   }, []);
 
   const fetchMyJobs = async () => {
@@ -40,12 +50,70 @@ const JobPosterDashboard = () => {
     }
   };
 
+  const fetchInbox = async () => {
+    try {
+      const res = await API.get('/api/messages/my');
+      setMessages(res.data || []);
+    } catch (err) {
+      console.error("Inbox load fail", err);
+    }
+  };
+
+  const handleMarkAsRead = async (messageId) => {
+    try {
+      await API.put(`/api/messages/${messageId}/read`);
+      setMessages(prev => prev.map(m => m.id === messageId ? { ...m, read: true } : m));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleToggleApplicants = async (jobId) => {
+    if (expandedJobId === jobId) {
+      setExpandedJobId(null);
+      return;
+    }
+
+    setExpandedJobId(jobId);
+    setApplicantsLoading(true);
+    try {
+      const res = await API.get(`/api/jobs/${jobId}/applications`);
+      setApplicantsMap(prev => ({ ...prev, [jobId]: res.data }));
+    } catch (err) {
+      console.error("Failed to load applicants", err);
+    } finally {
+      setApplicantsLoading(false);
+    }
+  };
+
+  const handleSelectApplicant = async (applicationId, jobId) => {
+    setError('');
+    try {
+      await API.put(`/api/jobs/applications/${applicationId}/select`);
+      // Update local status
+      setApplicantsMap(prev => {
+        const list = prev[jobId] || [];
+        return {
+          ...prev,
+          [jobId]: list.map(app => app.id === applicationId ? { ...app, status: 'SELECTED' } : app)
+        };
+      });
+      // Refresh counts
+      const response = await API.get('/api/jobs/my');
+      setMyJobs(response.data);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to select applicant.');
+    }
+  };
+
   const validateForm = () => {
     const tempErrors = {};
     if (!formData.title.trim()) tempErrors.title = 'Title is required';
     if (!formData.description.trim()) tempErrors.description = 'Description is required';
     if (!formData.requirements.trim()) tempErrors.requirements = 'Requirements are required';
     if (!formData.priceRange.trim()) tempErrors.priceRange = 'Budget or price range is required';
+    if (formData.vacancies <= 0) tempErrors.vacancies = 'Vacancies must be greater than 0';
+    if (formData.maxApplications <= 0) tempErrors.maxApplications = 'Applications count limit must be greater than 0';
 
     setFormErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
@@ -67,12 +135,15 @@ const JobPosterDashboard = () => {
     setFormLoading(true);
     try {
       const response = await API.post('/api/jobs', formData);
-      setFormSuccess('Project gig published successfully!');
+      setFormSuccess('Opportunity request published successfully!');
       setFormData({
         title: '',
         description: '',
         requirements: '',
         priceRange: '',
+        type: 'JOB',
+        vacancies: 1,
+        maxApplications: 100,
       });
       setMyJobs((prev) => [response.data, ...prev]);
       setTimeout(() => {
@@ -80,7 +151,7 @@ const JobPosterDashboard = () => {
         setFormSuccess('');
       }, 1500);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to publish job.');
+      setError(err.response?.data?.message || 'Failed to publish opportunity.');
     } finally {
       setFormLoading(false);
     }
@@ -91,108 +162,7 @@ const JobPosterDashboard = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const greeting = new Date().getHours() < 12 ? 'Good Morning' : (new Date().getHours() < 17 ? 'Good Afternoon' : 'Good Evening');
 
-  return (
-    <div className="dashboard-layout-wrapper">
-      {/* Sidebar Navigation */}
-      <div className="sidebar-card">
-        <div className="sidebar-profile">
-          <div className="sidebar-avatar">
-            <span>{user?.fullName?.charAt(0).toUpperCase() || 'U'}</span>
-          </div>
-          <div className="sidebar-info">
-            <span className="sidebar-name">{user?.fullName || 'Partner'}</span>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>🏢 Partner</span>
-          </div>
-        </div>
-
-        <div className="sidebar-menu-group">
-          <span className="sidebar-menu-label">General</span>
-          <Link to="/job-poster-dashboard" className="sidebar-menu-item active">
-            <FiGrid className="sidebar-icon" /> Dashboard
-          </Link>
-          <Link to="/profile" className="sidebar-menu-item">
-            <FiUser className="sidebar-icon" /> My Profile
-          </Link>
-          <button onClick={logout} className="sidebar-menu-item" style={{ marginTop: 'auto' }}>
-            <FiLogOut className="sidebar-icon" /> Logout
-          </button>
-        </div>
-      </div>
-
-      {/* Main Content Area */}
-      <div className="main-content-area">
-        <div className="dashboard-container" style={{ padding: 0 }}>
-          <div style={{ textAlign: 'left', marginBottom: '2rem' }}>
-            <h1 className="gradient-text" style={{ fontSize: '2.5rem', fontWeight: 800 }}>
-              {greeting}, {user?.fullName || 'Partner'} 👋
-            </h1>
-            <p style={{ color: 'var(--text-muted)', fontSize: '1rem', marginTop: '0.25rem' }}>
-              Here is your organization's overview dashboard for today.
-            </p>
-          </div>
-
-          {/* Visual Stats Row */}
-          <div className="dashboard-stats-row">
-            <div className="stat-card stat-blue">
-              <span className="stat-icon"><FiBriefcase className="stat-icon-svg" /></span>
-              <div className="stat-details">
-                <span className="stat-label">Active Gigs</span>
-                <span className="stat-value">{myJobs.length} Published</span>
-              </div>
-            </div>
-            <div className="stat-card stat-indigo">
-              <span className="stat-icon"><FiUsers className="stat-icon-svg" /></span>
-              <div className="stat-details">
-                <span className="stat-label">Total Applicants</span>
-                <span className="stat-value">---</span>
-              </div>
-            </div>
-            <div className="stat-card stat-green">
-              <span className="stat-icon"><FiActivity className="stat-icon-svg" /></span>
-              <div className="stat-details">
-                <span className="stat-label">System Status</span>
-                <span className="stat-value">Operational</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="dashboard-header-wrapper" style={{ marginTop: '3rem' }}>
-            <div>
-              <h1 className="dashboard-title" style={{ fontSize: '1.8rem', fontWeight: 800 }}>Manage <span className="gradient-text">Gigs</span></h1>
-              <p className="dashboard-subtitle">Create, monitor, and manage your published projects</p>
-            </div>
-            <div>
-              <button
-                className="btn btn-secondary"
-                onClick={() => setShowForm(!showForm)}
-              >
-                {showForm ? 'Cancel' : '➕ Post a New Gig'}
-              </button>
-            </div>
-          </div>
-
-          {showForm && (
-            <div className="job-form-wrapper glass-card">
-              <h3 style={{ textAlign: 'left' }}>Post a New Project Request</h3>
-              <p className="form-helper-text" style={{ textAlign: 'left' }}>Provide the details of the task you need university student developers to execute.</p>
-
-              {formSuccess && <div className="alert alert-success">{formSuccess}</div>}
-
-              <form onSubmit={handleSubmit} className="new-job-form" style={{ textAlign: 'left' }}>
-                <div className="form-group">
-                  <label className="form-label" htmlFor="title">Gig Title</label>
-                  <input
-                    className="form-input"
-                    type="text"
-                    id="title"
-                    name="title"
-                    placeholder="e.g. Develop React landing page, Java API integration"
-                    value={formData.title}
-                    onChange={handleChange}
-                  />
-                  {formErrors.title && <span className="validation-error">⚠️ {formErrors.title}</span>}
                 </div>
 
                 <div className="form-group">
@@ -222,43 +192,7 @@ const JobPosterDashboard = () => {
                   {formErrors.requirements && <span className="validation-error">⚠️ {formErrors.requirements}</span>}
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label" htmlFor="priceRange">Budget / Price Range</label>
-                  <input
-                    className="form-input"
-                    type="text"
-                    id="priceRange"
-                    name="priceRange"
-                    placeholder="e.g. Rs. 15,000 - Rs. 20,000"
-                    value={formData.priceRange}
-                    onChange={handleChange}
-                  />
-                  {formErrors.priceRange && <span className="validation-error">⚠️ {formErrors.priceRange}</span>}
-                </div>
 
-                <button
-                  type="submit"
-                  className="btn btn-primary publish-submit-btn"
-                  disabled={formLoading}
-                >
-                  {formLoading ? 'Publishing Gig...' : 'Publish Gig to Network'}
-                </button>
-              </form>
-            </div>
-          )}
-
-          {error && !showForm && <div className="alert alert-danger">{error}</div>}
-
-          {loading ? (
-            <div className="loading-state">
-              <div className="spinner"></div>
-              <p>Scanning database for your listings...</p>
-            </div>
-          ) : myJobs.length === 0 ? (
-            <div className="empty-state glass-card">
-              <span className="empty-icon">📁</span>
-              <h3>No Published Gigs</h3>
-              <p>You haven't posted any student project gigs yet. Click the button above to publish your first one!</p>
             </div>
           ) : (
             <div className="jobs-list">
