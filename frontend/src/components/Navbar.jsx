@@ -18,30 +18,14 @@ const Navbar = () => {
         <Link to="/" className="nav-logo">
           Skill<span className="logo-accent">Share</span>
         </Link>
-        
+
         <div className="nav-links">
           {user ? (
             <>
               <span className="nav-welcome">
                 Hey, <strong>{user.fullName}</strong>
               </span>
-              {user.role === 'ROLE_ADMIN' ? (
-                <Link to="/admin-dashboard" className="nav-item dashboard-link">
-                  Admin Panel
-                </Link>
-              ) : (
-                <>
-                  <Link 
-                    to={user.role === 'ROLE_STUDENT' ? '/student-dashboard' : '/job-poster-dashboard'} 
-                    className="nav-item dashboard-link"
-                  >
-                    Dashboard
-                  </Link>
-                  <Link to="/profile" className="nav-item">
-                    Profile
-                  </Link>
-                </>
-              )}
+
               <button onClick={handleLogout} className="btn btn-outline nav-logout-btn">
                 Logout
               </button>

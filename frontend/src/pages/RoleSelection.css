@@ -82,7 +82,8 @@
 
 .role-btn {
   width: 100%;
-  pointer-events: none; /* Card click triggers navigation */
+  pointer-events: none;
+  /* Card click triggers navigation */
 }
 
 @media (max-width: 768px) {
@@ -90,6 +91,7 @@
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
+
   .role-title {
     font-size: 2.2rem;
   }
