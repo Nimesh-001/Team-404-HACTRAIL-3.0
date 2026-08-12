@@ -1,0 +1,245 @@
+.dashboard-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 1rem 0 3rem 0;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.dashboard-header-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  gap: 1.5rem;
+}
+
+.dashboard-title {
+  font-size: 2.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-subtitle {
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+.search-bar-container {
+  flex: 0 1 400px;
+}
+
+.search-input {
+  background: rgba(15, 23, 42, 0.7);
+}
+
+.search-input:focus {
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+/* Form section in Poster Dashboard */
+.job-form-wrapper {
+  margin-bottom: 3rem;
+  background: rgba(15, 23, 42, 0.4);
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+.job-form-wrapper h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.form-helper-text {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.new-job-form {
+  margin-top: 1rem;
+}
+
+.publish-submit-btn {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.85rem;
+}
+
+.section-title {
+  font-size: 1.6rem;
+  margin: 2rem 0 1.25rem 0;
+  border-left: 4px solid var(--secondary);
+  padding-left: 0.75rem;
+}
+
+.font-normal {
+  font-weight: 500;
+}
+
+/* Jobs list */
+.jobs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.job-card {
+  padding: 2rem;
+  text-align: left;
+}
+
+.job-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.client-tag {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary);
+  background: var(--primary-glow);
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.job-title {
+  font-size: 1.4rem;
+  color: var(--text-main);
+}
+
+.job-budget-badge {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--primary);
+  padding: 0.4rem 0.95rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px var(--primary-glow);
+  white-space: nowrap;
+}
+
+.budget-secondary {
+  background: var(--secondary);
+  box-shadow: 0 4px 10px var(--secondary-glow);
+}
+
+.job-card-body {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.job-desc {
+  color: var(--text-main);
+  font-size: 0.975rem;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.job-reqs strong {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.job-reqs p {
+  color: var(--text-main);
+  font-size: 0.925rem;
+}
+
+.job-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.post-date {
+  font-size: 0.85rem;
+  color: var(--text-dark);
+}
+
+.status-tag {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+}
+
+.status-active {
+  color: var(--primary);
+  background: var(--primary-glow);
+}
+
+.apply-btn {
+  padding: 0.5rem 1.2rem;
+  font-size: 0.875rem;
+}
+
+/* States */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  color: var(--text-muted);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.6;
+}
+
+.empty-state h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  color: var(--text-muted);
+  max-width: 400px;
+}
+
+@media (max-width: 768px) {
+  .dashboard-header-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .search-bar-container {
+    flex: 1;
+  }
+  .job-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .job-budget-badge {
+    margin-top: 0.5rem;
+  }
+}
