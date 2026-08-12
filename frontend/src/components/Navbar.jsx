@@ -18,15 +18,15 @@ const Navbar = () => {
         <Link to="/" className="nav-logo">
           Skill<span className="logo-accent">Share</span>
         </Link>
-        
+
         <div className="nav-links">
           {user ? (
             <>
               <span className="nav-welcome">
                 Hey, <strong>{user.fullName}</strong>
               </span>
-              <Link 
-                to={user.role === 'ROLE_STUDENT' ? '/student-dashboard' : '/job-poster-dashboard'} 
+              <Link
+                to={user.role === 'ROLE_STUDENT' ? '/student-dashboard' : '/job-poster-dashboard'}
                 className="nav-item dashboard-link"
               >
                 Dashboard

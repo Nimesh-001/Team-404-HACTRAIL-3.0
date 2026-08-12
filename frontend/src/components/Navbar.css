@@ -1,8 +1,6 @@
 .navbar {
   height: var(--header-height);
-  background: rgba(9, 13, 22, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: var(--bg-dark);
   border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
@@ -10,6 +8,7 @@
   display: flex;
   align-items: center;
   transition: var(--transition);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .nav-container {
@@ -26,16 +25,22 @@
   font-size: 1.6rem;
   font-weight: 800;
   letter-spacing: -0.03em;
-  color: var(--text-main);
+  color: var(--primary); /* Are ya yellow?! logo prefix */
   display: flex;
   align-items: center;
+  transition: var(--transition);
+}
+
+.nav-logo:hover {
+  transform: scale(1.02);
 }
 
 .logo-accent {
-  background: var(--gradient-main);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--secondary); /* Silver Fox logo suffix */
+  background: none;
+  -webkit-background-clip: initial;
+  -webkit-text-fill-color: initial;
+  background-clip: initial;
 }
 
 .nav-links {
@@ -55,32 +60,51 @@
 
 .nav-item {
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 600;
   transition: var(--transition);
   color: var(--text-muted);
+  position: relative;
+  padding: 0.25rem 0;
 }
 
 .nav-item:hover {
-  color: var(--text-main);
+  color: var(--primary);
+}
+
+.nav-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary);
+  transition: var(--transition);
+  border-radius: 2px;
+}
+
+.nav-item:hover::after {
+  width: 100%;
 }
 
 .dashboard-link {
   color: var(--primary);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .dashboard-link:hover {
-  text-shadow: 0 0 8px var(--primary-glow);
+  color: var(--primary);
 }
 
 .nav-logout-btn {
-  padding: 0.5rem 1rem;
-  font-size: 0.85rem;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.875rem;
 }
 
 .register-btn {
   padding: 0.5rem 1.2rem;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
+  box-shadow: 0 2px 6px var(--primary-glow);
 }
 
 @media (max-width: 768px) {
