@@ -1,0 +1,94 @@
+.navbar {
+  height: var(--header-height);
+  background: rgba(9, 13, 22, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  transition: var(--transition);
+}
+
+.nav-container {
+  max-width: var(--max-width);
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+}
+
+.logo-accent {
+  background: var(--gradient-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-welcome {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.nav-welcome strong {
+  color: var(--text-main);
+}
+
+.nav-item {
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: var(--transition);
+  color: var(--text-muted);
+}
+
+.nav-item:hover {
+  color: var(--text-main);
+}
+
+.dashboard-link {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.dashboard-link:hover {
+  text-shadow: 0 0 8px var(--primary-glow);
+}
+
+.nav-logout-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+}
+
+.register-btn {
+  padding: 0.5rem 1.2rem;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .nav-welcome {
+    display: none;
+  }
+  
+  .nav-links {
+    gap: 1rem;
+  }
+}
