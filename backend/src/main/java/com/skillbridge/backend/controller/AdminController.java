@@ -50,6 +50,26 @@ public class AdminController {
         }
     }
 
+    @PutMapping("/users/{userId}/delete")
+    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+        try {
+            adminService.deleteUser(userId);
+            return ResponseEntity.ok(new MessageResponse("User soft-deleted successfully!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
+    }
+
+    @PutMapping("/users/{userId}/restore")
+    public ResponseEntity<?> restoreUser(@PathVariable Long userId) {
+        try {
+            adminService.restoreUser(userId);
+            return ResponseEntity.ok(new MessageResponse("User restored successfully!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
+    }
+
     @GetMapping("/jobs")
     public ResponseEntity<List<JobPost>> getAllJobs() {
         return ResponseEntity.ok(adminService.getAllJobs());
@@ -114,5 +134,34 @@ public class AdminController {
     @GetMapping("/selected-report")
     public ResponseEntity<List<com.skillbridge.backend.entity.JobApplication>> getSelectedReport() {
         return ResponseEntity.ok(adminService.getSelectedReport());
+    }
+
+    @PutMapping("/bank-details")
+    public ResponseEntity<?> updateBankDetails(@RequestBody com.skillbridge.backend.entity.UniversityBankDetails details) {
+        try {
+            return ResponseEntity.ok(adminService.updateBankDetails(details));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/jobs/{jobId}/notify-payment")
+    public ResponseEntity<?> notifyPaymentCollection(@PathVariable Long jobId, @RequestBody com.skillbridge.backend.dto.PaymentNotifyRequest request) {
+        try {
+            adminService.notifyPaymentCollection(jobId, request);
+            return ResponseEntity.ok(new MessageResponse("Payment collection notification broadcasted successfully to all selected candidates."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
+    }
+
+    @PutMapping("/jobs/{jobId}/close")
+    public ResponseEntity<?> closeJob(@PathVariable Long jobId, @RequestBody com.skillbridge.backend.dto.CloseJobRequest request) {
+        try {
+            adminService.closeJob(jobId, request);
+            return ResponseEntity.ok(new MessageResponse("Project closed and finalized successfully. Student balances updated."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
     }
 }

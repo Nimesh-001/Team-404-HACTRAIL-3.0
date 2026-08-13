@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 @Service
 public class ProfileService {
     @Autowired
@@ -18,6 +20,9 @@ public class ProfileService {
 
     @Autowired
     private JobPosterProfileRepository jobPosterProfileRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public ProfileResponse getProfile(String username) {
         User user = userRepository.findByUsername(username)
@@ -96,6 +101,12 @@ public class ProfileService {
         profile.setSkills(req.getSkills());
 
         studentProfileRepository.save(profile);
+
+        // Update password if provided
+        if (req.getPassword() != null && !req.getPassword().trim().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(req.getPassword().trim()));
+            userRepository.save(user);
+        }
     }
 
     @Transactional

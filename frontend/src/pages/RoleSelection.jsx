@@ -8,7 +8,7 @@ const RoleSelection = () => {
   return (
     <div className="role-selection-container">
       <div className="role-selection-header">
-        <h1 className="role-title">Join <span className="gradient-text">SkillShare</span></h1>
+        <h1 className="role-title">Join <span className="gradient-text">SkillBridge</span></h1>
         <p className="role-subtitle">Select your role to get started with our university community</p>
       </div>
 

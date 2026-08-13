@@ -20,7 +20,7 @@ public class JobPosterProfile {
     @Column(columnDefinition = "TEXT")
     private String bio;
 
-    @Column(name = "profile_photo", columnDefinition = "TEXT")
+    @Column(name = "profile_photo", columnDefinition = "LONGTEXT")
     private String profilePhoto;
 
     @Column(name = "current_position")

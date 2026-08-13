@@ -51,11 +51,21 @@ public class StudentProfileUpdateRequest {
         this.linkedinLink = linkedinLink;
     }
 
+    private String password;
+
     public String getSkills() {
         return skills;
     }
 
     public void setSkills(String skills) {
         this.skills = skills;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

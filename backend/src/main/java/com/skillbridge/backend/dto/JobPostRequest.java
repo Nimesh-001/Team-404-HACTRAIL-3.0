@@ -9,10 +9,8 @@ public class JobPostRequest {
     @NotBlank(message = "Job Description is required")
     private String description;
 
-    @NotBlank(message = "Requirements are required")
     private String requirements;
 
-    @NotBlank(message = "Price Range is required")
     private String priceRange;
 
     private String type = "JOB";
@@ -20,6 +18,10 @@ public class JobPostRequest {
     private Integer vacancies = 1;
 
     private Integer maxApplications = 100;
+
+    private String bankSlip;
+
+    private String websiteLink;
 
     public JobPostRequest() {
     }
@@ -78,5 +80,21 @@ public class JobPostRequest {
 
     public void setMaxApplications(Integer maxApplications) {
         this.maxApplications = maxApplications;
+    }
+
+    public String getBankSlip() {
+        return bankSlip;
+    }
+
+    public void setBankSlip(String bankSlip) {
+        this.bankSlip = bankSlip;
+    }
+
+    public String getWebsiteLink() {
+        return websiteLink;
+    }
+
+    public void setWebsiteLink(String websiteLink) {
+        this.websiteLink = websiteLink;
     }
 }
