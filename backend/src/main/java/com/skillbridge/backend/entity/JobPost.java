@@ -19,12 +19,10 @@ public class JobPost {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String description;
 
-    @NotBlank
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = true)
     private String requirements;
 
-    @NotBlank
-    @Column(name = "price_range", nullable = false)
+    @Column(name = "price_range", nullable = true)
     private String priceRange;
 
     private String status = "PENDING";
@@ -39,6 +37,15 @@ public class JobPost {
 
     @Column(name = "application_count")
     private Integer applicationCount = 0;
+
+    @Column(name = "bank_slip", columnDefinition = "LONGTEXT")
+    private String bankSlip;
+
+    @Column(name = "signed_report_slip", columnDefinition = "LONGTEXT")
+    private String signedReportSlip;
+
+    @Column(name = "website_link")
+    private String websiteLink;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "posted_by_id", nullable = false)
@@ -157,5 +164,29 @@ public class JobPost {
 
     public void setApplicationCount(Integer applicationCount) {
         this.applicationCount = applicationCount;
+    }
+
+    public String getBankSlip() {
+        return bankSlip;
+    }
+
+    public void setBankSlip(String bankSlip) {
+        this.bankSlip = bankSlip;
+    }
+
+    public String getSignedReportSlip() {
+        return signedReportSlip;
+    }
+
+    public void setSignedReportSlip(String signedReportSlip) {
+        this.signedReportSlip = signedReportSlip;
+    }
+
+    public String getWebsiteLink() {
+        return websiteLink;
+    }
+
+    public void setWebsiteLink(String websiteLink) {
+        this.websiteLink = websiteLink;
     }
 }

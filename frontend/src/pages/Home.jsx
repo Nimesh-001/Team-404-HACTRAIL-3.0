@@ -27,7 +27,7 @@ const Home = () => {
           Connect. Collaborate. <span className="gradient-text">Earn.</span>
         </h1>
         <p className="hero-description">
-          SkillShare is the exclusive freelancing platform for university students to share their expertise, execute high-quality projects, and gain real-world industrial experience while earning income.
+          SkillBridge is the exclusive freelancing platform for university students to share their expertise, execute high-quality projects, and gain real-world industrial experience while earning income.
         </p>
         <div className="hero-ctas">
           <button onClick={handleCTA} className="btn btn-primary cta-btn-large">

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 public interface JobApplicationRepository extends JpaRepository<JobApplication, Long> {
     boolean existsByJobPostIdAndStudentId(Long jobPostId, Long studentId);
     long countByJobPostId(Long jobPostId);
+    long countByJobPostIdAndStatus(Long jobPostId, String status);
     java.util.List<JobApplication> findByJobPostIdOrderByAppliedAtDesc(Long jobPostId);
     java.util.List<JobApplication> findByStatusOrderByAppliedAtDesc(String status);
+    java.util.List<JobApplication> findByStudentIdOrderByAppliedAtDesc(Long studentId);
 }

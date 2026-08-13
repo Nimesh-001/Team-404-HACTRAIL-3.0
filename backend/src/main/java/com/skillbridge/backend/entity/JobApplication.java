@@ -30,6 +30,8 @@ public class JobApplication {
     @Column(nullable = false)
     private String status = "PENDING"; // PENDING, SELECTED
 
+    private Integer rating;
+
     @Column(name = "applied_at", nullable = false, updatable = false)
     private LocalDateTime appliedAt;
 
@@ -102,5 +104,13 @@ public class JobApplication {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
     }
 }

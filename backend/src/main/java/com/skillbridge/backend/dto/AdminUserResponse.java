@@ -9,11 +9,12 @@ public class AdminUserResponse {
     private boolean active;
     private boolean verified;
     private String studentId;
+    private boolean deleted;
 
     public AdminUserResponse() {
     }
 
-    public AdminUserResponse(Long id, String fullName, String email, String phone, String role, boolean active, boolean verified, String studentId) {
+    public AdminUserResponse(Long id, String fullName, String email, String phone, String role, boolean active, boolean verified, String studentId, boolean deleted) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
@@ -22,6 +23,7 @@ public class AdminUserResponse {
         this.active = active;
         this.verified = verified;
         this.studentId = studentId;
+        this.deleted = deleted;
     }
 
     public Long getId() {
@@ -86,5 +88,13 @@ public class AdminUserResponse {
 
     public void setStudentId(String studentId) {
         this.studentId = studentId;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

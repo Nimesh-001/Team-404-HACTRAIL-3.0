@@ -83,4 +83,24 @@ public class UserMessageController {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
+
+    @PostMapping("/messages/to-admin")
+    public ResponseEntity<?> sendMessageToAdmin(@RequestBody java.util.Map<String, String> payload, Principal principal) {
+        try {
+            String content = payload.get("messageContent");
+            if (content == null || content.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Message content cannot be blank."));
+            }
+            User sender = userRepository.findByUsername(principal.getName())
+                    .orElseThrow(() -> new RuntimeException("Sender not found"));
+            User admin = userRepository.findByEmail("admin@skillshare.com")
+                    .orElseThrow(() -> new RuntimeException("Admin account not found"));
+
+            AdminMessage msg = new AdminMessage(admin, "From " + sender.getFullName() + " (" + sender.getRole().name().replace("ROLE_", "") + "): " + content);
+            adminMessageRepository.save(msg);
+            return ResponseEntity.ok(new MessageResponse("Message sent to administrator successfully!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
+    }
 }

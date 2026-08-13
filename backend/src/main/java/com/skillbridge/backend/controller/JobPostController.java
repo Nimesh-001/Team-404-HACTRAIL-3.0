@@ -19,6 +19,9 @@ public class JobPostController {
     @Autowired
     private JobPostService jobPostService;
 
+    @Autowired
+    private com.skillbridge.backend.service.AdminService adminService;
+
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_JOB_POSTER')")
     public ResponseEntity<?> createJob(@Valid @RequestBody JobPostRequest request, Principal principal) {
@@ -59,7 +62,7 @@ public class JobPostController {
     }
 
     @GetMapping("/{jobId}/applications")
-    @PreAuthorize("hasAuthority('ROLE_JOB_POSTER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_JOB_POSTER', 'ROLE_ADMIN')")
     public ResponseEntity<?> getApplicationsForJob(@PathVariable Long jobId, Principal principal) {
         try {
             String username = principal.getName();
@@ -79,5 +82,29 @@ public class JobPostController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
+    }
+
+    @GetMapping("/bank-details")
+    public ResponseEntity<?> getBankDetails() {
+        return ResponseEntity.ok(adminService.getBankDetails());
+    }
+
+    @PostMapping("/{jobId}/complete")
+    @PreAuthorize("hasAuthority('ROLE_JOB_POSTER')")
+    public ResponseEntity<?> completeJob(@PathVariable Long jobId, @RequestBody com.skillbridge.backend.dto.CompleteJobRequest request, Principal principal) {
+        try {
+            String username = principal.getName();
+            jobPostService.completeJob(jobId, request, username);
+            return ResponseEntity.ok(new MessageResponse("Opportunity completed successfully. Ratings have been recorded."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/applications/my")
+    @PreAuthorize("hasAuthority('ROLE_STUDENT')")
+    public ResponseEntity<List<com.skillbridge.backend.entity.JobApplication>> getMyApplications(Principal principal) {
+        String username = principal.getName();
+        return ResponseEntity.ok(jobPostService.getMyApplications(username));
     }
 }
